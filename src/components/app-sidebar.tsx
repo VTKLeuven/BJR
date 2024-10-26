@@ -1,4 +1,5 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { TvMinimalPlay,ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle } from "lucide-react"
+import { Switch } from "@/components/ui/switch";
 
 import {
     Sidebar,
@@ -14,29 +15,34 @@ import {
 // Menu items.
 const items = [
     {
-        title: "Home",
+        title: "Statistics",
         url: "#",
-        icon: Home,
+        icon: ChartNoAxesCombined,
     },
     {
-        title: "Inbox",
+        title: "Queue up",
         url: "#",
-        icon: Inbox,
+        icon: UserRoundPlus,
     },
     {
-        title: "Calendar",
+        title: "Live runners",
         url: "#",
-        icon: Calendar,
+        icon: TvMinimalPlay,
     },
     {
-        title: "Search",
+        title: "Queue",
+        url: "#",
+        icon: Users,
+    },
+    {
+        title: "Controls",
+        url: "#",
+        icon: SkipForward,
+    },
+    {
+        title: "Query",
         url: "#",
         icon: Search,
-    },
-    {
-        title: "Settings",
-        url: "#",
-        icon: Settings,
     },
 ]
 
@@ -45,7 +51,6 @@ export function AppSidebar() {
         <Sidebar>
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
                             {items.map((item) => (
@@ -58,6 +63,16 @@ export function AppSidebar() {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
+
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild>
+                                    <div className="flex items-center">
+                                        <CloudDrizzle />
+                                        <span>Raining: </span>
+                                        <Switch/>
+                                    </div>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
