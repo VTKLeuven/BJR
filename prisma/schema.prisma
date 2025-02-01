@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+}
+
+model Runner {
+  id              Int      @id @default(autoincrement())
+  firstName       String
+  lastName        String
+  identification  String   @unique
+  faculty         String
+  registrationTime DateTime @default(now())
+  groupNumber     Int
+  testTime        Float?
+  firstYear       Boolean
+  group           Group    @relation(fields: [groupNumber], references: [groupNumber])
+  laps            Lap[]    // Relationship to laps
+}
+
+model Group {
+  groupNumber Int    @id
+  groupName   String
+  runners     Runner[]
+}
+
+model Lap {
+  id        Int      @id @default(autoincrement())
+  runnerId  Int
+  startTime DateTime
+  time      Float
+  raining   Boolean
+
+  runner    Runner   @relation(fields: [runnerId], references: [id])
+}
+
+model GlobalState {
+  id       Int     @id @default(1) // Ensures there's only one row
+  raining  Boolean
+}

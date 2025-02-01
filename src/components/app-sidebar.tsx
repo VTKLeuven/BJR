@@ -6,7 +6,6 @@ import {
     SidebarContent,
     SidebarGroup,
     SidebarGroupContent,
-    SidebarGroupLabel,
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
@@ -16,32 +15,32 @@ import {
 const items = [
     {
         title: "Statistics",
-        url: "#",
+        url: "/",
         icon: ChartNoAxesCombined,
     },
     {
         title: "Queue up",
-        url: "#",
+        url: "/queue-up", // Updated URL
         icon: UserRoundPlus,
     },
     {
         title: "Live runners",
-        url: "#",
+        url: "/",
         icon: TvMinimalPlay,
     },
     {
         title: "Queue",
-        url: "#",
+        url: "/",
         icon: Users,
     },
     {
         title: "Controls",
-        url: "#",
+        url: "/",
         icon: SkipForward,
     },
     {
         title: "Query",
-        url: "#",
+        url: "/",
         icon: Search,
     },
 ]

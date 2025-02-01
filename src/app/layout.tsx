@@ -1,19 +1,26 @@
 import "@/app/globals.css";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/app-sidebar"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html>
-        <body>
+        <html lang="en">
+        <body className="w-full h-full">
         <SidebarProvider>
-            <AppSidebar />
-            <main>
-                <SidebarTrigger />
-                {children}
-            </main>
+            <div className="flex w-full h-full">
+                <div>
+                    <AppSidebar />
+                </div>
+
+                <main className="flex-grow flex flex-col">
+                    <SidebarTrigger className="self-start"/>
+                    <div className="flex-grow flex justify-center items-center">
+                        {children}
+                    </div>
+                </main>
+            </div>
         </SidebarProvider>
         </body>
         </html>
-    )
+    );
 }
