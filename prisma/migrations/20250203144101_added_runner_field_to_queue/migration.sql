@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "Queue" ADD CONSTRAINT "Queue_runnerId_fkey" FOREIGN KEY ("runnerId") REFERENCES "Runner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

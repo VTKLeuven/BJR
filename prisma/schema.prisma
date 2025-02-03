@@ -19,19 +19,29 @@ model Runner {
   firstName       String
   lastName        String
   identification  String   @unique
-  faculty         String
+  facultyId         Int
   registrationTime DateTime @default(now())
   groupNumber     Int
   testTime        Float?
   firstYear       Boolean
-  group           Group    @relation(fields: [groupNumber], references: [groupNumber])
   laps            Lap[]    // Relationship to laps
+  queue          Queue[]
 }
 
 model Group {
   groupNumber Int    @id
   groupName   String
-  runners     Runner[]
+}
+
+model Faculty{
+  id        Int      @id @default(autoincrement())
+  name      String
+}
+
+model Queue{
+  queuePlace Int      @id @default(autoincrement())
+  runnerId   Int
+  runner     Runner   @relation(fields: [runnerId], references: [id])
 }
 
 model Lap {

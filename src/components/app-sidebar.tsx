@@ -1,4 +1,6 @@
-import { TvMinimalPlay,ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle } from "lucide-react"
+'use client'
+import { useState, useEffect } from "react";
+import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 import {
@@ -9,7 +11,7 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // Menu items.
 const items = [
@@ -20,32 +22,57 @@ const items = [
     },
     {
         title: "Queue up",
-        url: "/queue-up", // Updated URL
+        url: "/queue-up",
         icon: UserRoundPlus,
     },
     {
         title: "Live runners",
-        url: "/",
+        url: "/live-runners",
         icon: TvMinimalPlay,
     },
     {
         title: "Queue",
-        url: "/",
+        url: "/queue",
         icon: Users,
     },
     {
         title: "Controls",
-        url: "/",
+        url: "/controls",
         icon: SkipForward,
     },
     {
         title: "Query",
-        url: "/",
+        url: "/query",
         icon: Search,
     },
-]
+];
 
 export function AppSidebar() {
+    const [raining, setRaining] = useState(false);
+
+    useEffect(() => {
+        // Fetch the current raining state from the database
+        async function fetchRainingState() {
+            const response = await fetch("/api/global-state");
+            const data = await response.json();
+            setRaining(data.raining);
+        }
+
+        fetchRainingState();
+    }, []);
+
+    const handleRainingToggle = async () => {
+        const newRainingState = !raining;
+        setRaining(newRainingState);
+
+        // Update the raining state in the database
+        await fetch("/api/global-state", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ raining: newRainingState }),
+        });
+    };
+
     return (
         <Sidebar>
             <SidebarContent>
@@ -68,7 +95,7 @@ export function AppSidebar() {
                                     <div className="flex items-center">
                                         <CloudDrizzle />
                                         <span>Raining: </span>
-                                        <Switch/>
+                                        <Switch checked={raining} onCheckedChange={handleRainingToggle} />
                                     </div>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
@@ -77,5 +104,5 @@ export function AppSidebar() {
                 </SidebarGroup>
             </SidebarContent>
         </Sidebar>
-    )
+    );
 }
