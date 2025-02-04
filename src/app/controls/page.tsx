@@ -18,6 +18,8 @@ export default function ControlsPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                console.log('Fetching data...');
+
                 const response = await fetch('/api/controls-data', {
                     method: 'GET',
                 });
@@ -25,15 +27,15 @@ export default function ControlsPage() {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log('Fetched data:', data); // Log the fetched data
+
                 if (data.previousRunner) {
                     data.previousRunner.lapTime = data.previousRunner.laps[0]?.time;
                 }
+                console.log(data)
                 setPreviousRunner(data.previousRunner);
                 setCurrentRunner(data.currentRunner || null);
                 setNextRunner(data.nextRunner);
                 setRaining(data.raining);
-                console.log("hallo")
             } catch (error) {
                 console.error('Failed to fetch data:', error);
             }
@@ -64,31 +66,28 @@ export default function ControlsPage() {
     }, [currentRunner]);
 
     const handleStartNextRunner = async () => {
-        if (currentRunner && currentRunner.laps && currentRunner.laps.length > 0) {
-            const mostRecentLap = currentRunner.laps[0];
-            const lapTime = Date.now() - new Date(mostRecentLap.startTime).getTime();
-            await fetch('/api/laps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    runnerId: currentRunner.id,
-                    startTime: mostRecentLap.startTime,
-                    time: lapTime / 1000,
-                    raining,
-                }),
-            });
-        }
-
         const response = await fetch('/api/start-next-runner', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ raining }),
         });
         const data = await response.json();
-        setPreviousRunner(currentRunner);
-        setCurrentRunner(data.currentRunner);
-        setNextRunner(data.nextRunner);
-        setTimer(0);
+
+        if (data.error) {
+            setPreviousRunner(currentRunner);
+            setCurrentRunner(null);
+            setNextRunner(null);
+            setTimer(0);
+        } else {
+            setPreviousRunner(currentRunner ? {
+                ...currentRunner,
+                laps: currentRunner.laps || [],
+                lapTime: data.previousRunner?.lapTime,
+            } : null);
+            setCurrentRunner(data.currentRunner);
+            setNextRunner(data.nextRunner);
+            setTimer(0);
+        }
     };
 
     const handleUndo = async () => {
@@ -107,6 +106,12 @@ export default function ControlsPage() {
             const mostRecentLap = data.currentRunner.laps[0];
             setTimer(Date.now() - new Date(mostRecentLap.startTime).getTime());
         }
+    };
+
+    const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60000);
+        const seconds = Math.floor((time % 60000) / 1000);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
     return (
@@ -128,7 +133,7 @@ export default function ControlsPage() {
                 {currentRunner ? (
                     <div>
                         <p>Name: {currentRunner.firstName} {currentRunner.lastName}</p>
-                        <p>Timer: {Math.floor(timer / 1000)} seconds</p>
+                        <p>Timer: {formatTime(timer)}</p>
                     </div>
                 ) : (
                     <p>No current runner</p>

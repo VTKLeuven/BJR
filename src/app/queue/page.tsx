@@ -29,9 +29,9 @@ export default function QueuePage() {
             <h1 className="text-xl font-bold mb-4">Queue</h1>
             {queue.length > 0 ? (
                 <ul>
-                    {queue.map((entry) => (
+                    {queue.map((entry, index) => (
                         <li key={entry.queuePlace} className="border p-2 mb-2">
-                            {entry.queuePlace}. {entry.runner.firstName} {entry.runner.lastName}
+                            {index + 1}. {entry.runner.firstName} {entry.runner.lastName}
                         </li>
                     ))}
                 </ul>

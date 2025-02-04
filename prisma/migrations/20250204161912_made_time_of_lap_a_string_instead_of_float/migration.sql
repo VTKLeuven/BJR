@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Lap" ALTER COLUMN "time" SET DATA TYPE TEXT;

@@ -48,7 +48,7 @@ model Lap {
   id        Int      @id @default(autoincrement())
   runnerId  Int
   startTime DateTime
-  time      Float
+  time      String
   raining   Boolean
 
   runner    Runner   @relation(fields: [runnerId], references: [id])
