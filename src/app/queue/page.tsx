@@ -27,13 +27,13 @@ export default function QueuePage() {
         fetchQueue();
     }, []);
 
-    const handleDelete = async (queuePlace: number) => {
+    const handleDelete = async (id: number) => {
         try {
-            const response = await fetch(`/api/queue?queuePlace=${queuePlace}`, {
+            const response = await fetch(`/api/queue?id=${id}`, {
                 method: 'DELETE',
             });
             if (response.ok) {
-                setQueue(queue.filter(entry => entry.queuePlace !== queuePlace));
+                setQueue(queue.filter(entry => entry.id !== id));
             } else {
                 console.error("Failed to delete runner from queue");
             }
@@ -58,7 +58,7 @@ export default function QueuePage() {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(updatedQueue.map((item, index) => ({
-                    id: item.queuePlace,
+                    id: item.id,
                     queuePlace: index + 1,
                 }))),
             });
@@ -84,7 +84,7 @@ export default function QueuePage() {
                                             className="border p-2 mb-2 flex justify-between items-center"
                                         >
                                             <span>{index + 1}. {entry.runner.firstName} {entry.runner.lastName}</span>
-                                            <button onClick={() => handleDelete(entry.queuePlace)} className="text-red-500 ml-auto">
+                                            <button onClick={() => handleDelete(entry.id)} className="text-red-500 ml-auto">
                                                 <FontAwesomeIcon icon={faXmark} />
                                             </button>
                                         </li>

@@ -21,15 +21,15 @@ export async function GET() {
 
 export async function DELETE(request: Request) {
     const url = new URL(request.url);
-    const queuePlace = parseInt(url.searchParams.get('queuePlace') || '');
+    const id = parseInt(url.searchParams.get('id') || '');
 
-    if (isNaN(queuePlace)) {
+    if (isNaN(id)) {
         return NextResponse.json({ error: 'Invalid queue place' }, { status: 400 });
     }
 
     try {
         await prisma.queue.delete({
-            where: { queuePlace },
+            where: { id },
         });
         return NextResponse.json({ message: 'Runner deleted from queue' });
     } catch {

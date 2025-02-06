@@ -5,11 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="52a50b5c-d5a5-4b84-b9f2-737f162130e6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/api/queue/updateOrder.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/queue/route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/queue/route.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/api/queue/updateOrder.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/queue/updateOrder/route.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/queue/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/queue/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,11 +80,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/app/api/queue/updateOrder" />
       <recent name="$PROJECT_DIR$/src/app/queue-up" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$/src/app/pages" />
       <recent name="$PROJECT_DIR$/src/app" />
-      <recent name="$PROJECT_DIR$/src/styles" />
     </key>
   </component>
   <component name="SharedIndexes">
