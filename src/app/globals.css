@@ -85,4 +85,11 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  h2 {
+    @apply text-2xl font-bold mb-2;
+  }
+
+  p {
+    @apply text-base mb-1;
+  }
 }

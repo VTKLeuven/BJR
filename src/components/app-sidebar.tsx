@@ -12,13 +12,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import {Warning} from 'postcss'
 
 // Menu items.
 const items = [
     {
         title: "Statistics",
-        url: "/",
+        url: "/statistics",
         icon: ChartNoAxesCombined,
     },
     {
