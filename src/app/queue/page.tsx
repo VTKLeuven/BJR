@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { Queue, Runner } from '@prisma/client';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 
 interface QueueWithRunner extends Queue {
     runner: Runner;
@@ -41,23 +42,60 @@ export default function QueuePage() {
         }
     };
 
+    const handleDragEnd = async (result: DropResult) => {
+        if (!result.destination) return;
+
+        const updatedQueue = Array.from(queue);
+        const [movedItem] = updatedQueue.splice(result.source.index, 1);
+        updatedQueue.splice(result.destination.index, 0, movedItem);
+
+        setQueue(updatedQueue);
+
+        try {
+            await fetch('/api/queue/updateOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedQueue.map((item, index) => ({
+                    id: item.queuePlace,
+                    queuePlace: index + 1,
+                }))),
+            });
+        } catch (error) {
+            console.error("Error updating queue order:", error);
+        }
+    };
+
     return (
         <div className="p-4 mx-auto max-w-lg w-full">
             <h1 className="text-xl font-bold mb-4">Queue</h1>
-            {queue.length > 0 ? (
-                <ul>
-                    {queue.map((entry, index) => (
-                        <li key={entry.queuePlace} className="border p-2 mb-2 flex justify-between items-center">
-                            <span>{index + 1}. {entry.runner.firstName} {entry.runner.lastName}</span>
-                            <button onClick={() => handleDelete(entry.queuePlace)} className="text-red-500 ml-auto">
-                                <FontAwesomeIcon icon={faXmark} />
-                            </button>
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No entries in the queue.</p>
-            )}
+            <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="queue" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false} direction="vertical">
+                    {(provided) => (
+                        <ul {...provided.droppableProps} ref={provided.innerRef}>
+                            {queue.map((entry, index) => (
+                                <Draggable key={entry.id} draggableId={entry.id.toString()} index={index}>
+                                    {(provided) => (
+                                        <li
+                                            ref={provided.innerRef}
+                                            {...provided.draggableProps}
+                                            {...provided.dragHandleProps}
+                                            className="border p-2 mb-2 flex justify-between items-center"
+                                        >
+                                            <span>{index + 1}. {entry.runner.firstName} {entry.runner.lastName}</span>
+                                            <button onClick={() => handleDelete(entry.queuePlace)} className="text-red-500 ml-auto">
+                                                <FontAwesomeIcon icon={faXmark} />
+                                            </button>
+                                        </li>
+                                    )}
+                                </Draggable>
+                            ))}
+                            {provided.placeholder}
+                        </ul>
+                    )}
+                </Droppable>
+            </DragDropContext>
         </div>
     );
 }

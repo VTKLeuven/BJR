@@ -39,7 +39,8 @@ model Faculty{
 }
 
 model Queue{
-  queuePlace Int      @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
+  queuePlace Int
   runnerId   Int
   runner     Runner   @relation(fields: [runnerId], references: [id])
 }
