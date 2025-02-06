@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
-import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle } from "lucide-react";
+import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle, FileWarningIcon } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 import {
@@ -12,6 +12,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {Warning} from 'postcss'
 
 // Menu items.
 const items = [
@@ -45,6 +46,11 @@ const items = [
         url: "/query",
         icon: Search,
     },
+    {
+        title: "DEV ONLY RESET",
+        url: "/dev-only-reset",
+        icon: FileWarningIcon,
+    }
 ];
 
 export function AppSidebar() {
