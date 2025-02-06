@@ -11,6 +11,11 @@ interface QueueWithRunner extends Queue {
 
 export default function QueuePage() {
     const [queue, setQueue] = useState<QueueWithRunner[]>([]);
+    const [isClient, setIsClient] = useState(false)
+
+    useEffect(() => {
+        setIsClient(true)
+    }, [])
 
     useEffect(() => {
         async function fetchQueue() {
@@ -69,33 +74,35 @@ export default function QueuePage() {
 
     return (
         <div className="p-4 mx-auto max-w-lg w-full">
-            <h1 className="text-xl font-bold mb-4">Queue</h1>
-            <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="queue" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false} direction="vertical">
-                    {(provided) => (
-                        <ul {...provided.droppableProps} ref={provided.innerRef}>
-                            {queue.map((entry, index) => (
-                                <Draggable key={entry.id} draggableId={entry.id.toString()} index={index}>
-                                    {(provided) => (
-                                        <li
-                                            ref={provided.innerRef}
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            className="border p-2 mb-2 flex justify-between items-center"
-                                        >
-                                            <span>{index + 1}. {entry.runner.firstName} {entry.runner.lastName}</span>
-                                            <button onClick={() => handleDelete(entry.id)} className="text-red-500 ml-auto">
-                                                <FontAwesomeIcon icon={faXmark} />
-                                            </button>
-                                        </li>
-                                    )}
-                                </Draggable>
-                            ))}
-                            {provided.placeholder}
-                        </ul>
-                    )}
-                </Droppable>
-            </DragDropContext>
+            {isClient && <div>
+                <h1 className="text-xl font-bold mb-4">Queue</h1>
+                <DragDropContext onDragEnd={handleDragEnd}>
+                    <Droppable droppableId="queue" isDropDisabled={false} isCombineEnabled={false} ignoreContainerClipping={false} direction="vertical">
+                        {(provided) => (
+                            <ul {...provided.droppableProps} ref={provided.innerRef}>
+                                {queue.map((entry, index) => (
+                                    <Draggable key={entry.id} draggableId={entry.id.toString()} index={index}>
+                                        {(provided) => (
+                                            <li
+                                                ref={provided.innerRef}
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                className="border p-2 mb-2 flex justify-between items-center"
+                                            >
+                                                <span>{index + 1}. {entry.runner.firstName} {entry.runner.lastName}</span>
+                                                <button onClick={() => handleDelete(entry.id)} className="text-red-500 ml-auto">
+                                                    <FontAwesomeIcon icon={faXmark} />
+                                                </button>
+                                            </li>
+                                        )}
+                                    </Draggable>
+                                ))}
+                                {provided.placeholder}
+                            </ul>
+                        )}
+                    </Droppable>
+                </DragDropContext>
+            </div>}
         </div>
     );
 }
