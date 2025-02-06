@@ -6,8 +6,9 @@ const prisma = new PrismaClient();
 export async function GET() {
     try {
         const lastLap = await prisma.lap.findFirst({
-            orderBy: { startTime: 'asc' },
+            orderBy: { startTime: 'desc' },
             select: { runnerId: true },
+            skip: 1,
         });
 
         const previousRunner = lastLap
@@ -17,14 +18,14 @@ export async function GET() {
             })
             : null;
 
-        const firstLap = await prisma.lap.findFirst({
+        const currentLap = await prisma.lap.findFirst({
             orderBy: { startTime: 'desc' },
             select: { runnerId: true },
         });
 
-        const currentRunner = firstLap
+        const currentRunner = currentLap
             ? await prisma.runner.findUnique({
-                where: { id: firstLap.runnerId },
+                where: { id: currentLap.runnerId },
                 include: { laps: true },
             })
             : null;

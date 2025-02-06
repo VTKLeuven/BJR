@@ -11,36 +11,35 @@ export default function ControlsPage() {
     const [previousRunner, setPreviousRunner] = useState<RunnerWithLaps & { lapTime?: number } | null>(null);
     const [currentRunner, setCurrentRunner] = useState<RunnerWithLaps | null>(null);
     const [nextRunner, setNextRunner] = useState<RunnerWithLaps | null>(null);
-    const [raining, setRaining] = useState(false);
     const [timer, setTimer] = useState(0);
     const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                console.log('Fetching data...');
 
-                const response = await fetch('/api/controls-data', {
-                    method: 'GET',
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
+    async function fetchData() {
+        try {
+            console.log('Fetching data...');
 
-                if (data.previousRunner) {
-                    data.previousRunner.lapTime = data.previousRunner.laps[0]?.time;
-                }
-                console.log(data)
-                setPreviousRunner(data.previousRunner);
-                setCurrentRunner(data.currentRunner || null);
-                setNextRunner(data.nextRunner);
-                setRaining(data.raining);
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
+            const response = await fetch('/api/controls-data', {
+                method: 'GET',
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
-        }
+            const data = await response.json();
 
+            if (data.previousRunner) {
+                data.previousRunner.lapTime = data.previousRunner.laps[0]?.time;
+            }
+            console.log(data)
+            setPreviousRunner(data.previousRunner);
+            setCurrentRunner(data.currentRunner || null);
+            setNextRunner(data.nextRunner);
+        } catch (error) {
+            console.error('Failed to fetch data:', error);
+        }
+    }
+
+    useEffect(() => {
         fetchData();
 
         return () => {
@@ -55,7 +54,7 @@ export default function ControlsPage() {
             const mostRecentLap = currentRunner.laps[0];
             timerRef.current = setInterval(() => {
                 setTimer(Date.now() - new Date(mostRecentLap.startTime).getTime());
-            }, 1000);
+            }, 10);
         }
 
         return () => {
@@ -66,44 +65,24 @@ export default function ControlsPage() {
     }, [currentRunner]);
 
     const handleStartNextRunner = async () => {
-        const response = await fetch('/api/start-next-runner', {
+        await fetch('/api/start-next-runner', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ raining }),
         });
-        const data = await response.json();
 
-        if (data.error) {
-            setPreviousRunner(currentRunner);
-            setCurrentRunner(null);
-            setNextRunner(null);
-            setTimer(0);
-        } else {
-            setPreviousRunner(currentRunner ? {
-                ...currentRunner,
-                laps: currentRunner.laps || [],
-                lapTime: data.previousRunner?.lapTime,
-            } : null);
-            setCurrentRunner(data.currentRunner);
-            setNextRunner(data.nextRunner);
-            setTimer(0);
-        }
+        await fetchData();
+        setTimer(0);
     };
 
     const handleUndo = async () => {
-        const response = await fetch('/api/undo-start', {
+        await fetch('/api/undo-start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
         });
-        const data = await response.json();
-        if (data.previousRunner) {
-            data.previousRunner.lapTime = data.previousRunner.laps[0]?.time;
-        }
-        setPreviousRunner(data.previousRunner);
-        setCurrentRunner(data.currentRunner);
-        setNextRunner(data.nextRunner);
-        if (data.currentRunner && data.currentRunner.laps && data.currentRunner.laps.length > 0) {
-            const mostRecentLap = data.currentRunner.laps[0];
+
+        await fetchData();
+        if (currentRunner && currentRunner.laps && currentRunner.laps.length > 0) {
+            const mostRecentLap = currentRunner.laps[0];
             setTimer(Date.now() - new Date(mostRecentLap.startTime).getTime());
         }
     };
@@ -111,7 +90,8 @@ export default function ControlsPage() {
     const formatTime = (time: number) => {
         const minutes = Math.floor(time / 60000);
         const seconds = Math.floor((time % 60000) / 1000);
-        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        const hundredths = Math.floor((time % 1000) / 10);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${hundredths < 10 ? '0' : ''}${hundredths}`;
     };
 
     return (
@@ -122,7 +102,7 @@ export default function ControlsPage() {
                 {previousRunner ? (
                     <div>
                         <p>Name: {previousRunner.firstName} {previousRunner.lastName}</p>
-                        <p>Lap Time: {previousRunner.lapTime} seconds</p>
+                        <p>Lap Time: {previousRunner.lapTime}</p>
                     </div>
                 ) : (
                     <p>No previous runner</p>

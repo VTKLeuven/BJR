@@ -1,12 +1,22 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest) {
-    const { raining } = await req.json();
-
+export async function POST() {
     try {
+        // Fetch the raining state from the database
+        const globalState = await prisma.globalState.findUnique({
+            where: { id: 1 },
+        });
+
+        if (!globalState) {
+            return NextResponse.json({ error: 'Global state not found' }, { status: 500 });
+        }
+
+        const raining = globalState.raining;
+
+
         // Fetch the most recent lap before creating a new one
         const previousLap = await prisma.lap.findFirst({
             orderBy: { startTime: 'desc' },
@@ -31,46 +41,29 @@ export async function POST(req: NextRequest) {
             },
         });
 
-        const updatedRunner = await prisma.runner.findUnique({
-            where: { id: nextRunnerInQueue.runnerId },
-            include: { laps: true },
-        });
-
         await prisma.queue.delete({
             where: { queuePlace: nextRunnerInQueue.queuePlace },
         });
 
-        const nextRunner = await prisma.queue.findFirst({
-            orderBy: { queuePlace: 'asc' },
-            include: { runner: { include: { laps: true } } },
-        });
-
-        let previousRunner = null;
         let lapTime = null;
         if (previousLap) {
-            previousRunner = previousLap.runner;
             const startTime = new Date(previousLap.startTime).getTime();
             const currentTime = Date.now();
             const timeDiff = currentTime - startTime;
             const minutes = Math.floor(timeDiff / 60000);
             const seconds = Math.floor((timeDiff % 60000) / 1000);
-            lapTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            const hundreds = Math.floor((timeDiff % 1000) / 10);
+            lapTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}.${hundreds < 10 ? '0' : ''}${hundreds}`;
 
             // Update the lap time in the database
             await prisma.lap.update({
                 where: { id: previousLap.id },
-                data: { time: lapTime }, // Store time in seconds
+                data: { time: lapTime }, // Store time in hundreds of milliseconds
             });
         }
 
         return NextResponse.json({
-            currentRunner: updatedRunner,
-            nextRunner: nextRunner ? nextRunner.runner : null,
-            previousRunner: previousRunner ? {
-                ...previousRunner,
-                lapTime: lapTime,
-            } : null,
-            raining: raining,
+            message: 'Next runner started successfully',
         });
     } catch (error) {
         console.error('Error starting next runner:', error);
