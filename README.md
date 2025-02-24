@@ -4,6 +4,7 @@ Prerequisits:
 - Node.js
 - npm
 - postgresql
+- psycopg2, dotenv (python packages)
 
 1. Clone the repository
 2. Run `npm install` in the root directory
@@ -11,15 +12,18 @@ Prerequisits:
 ```
 sudo -i -u postgres
 psql
-CREATE DATABASE "24urenloop";
-CREATE USER <username> WITH PASSWORD '<password>';
-GRANT ALL PRIVILEGES ON DATABASE "24urenloop" TO <username;
+DROP DATABASE IF EXISTS "24urenloop";
+DROP USER IF EXISTS <username>;
+CREATE USER <username> WITH PASSWORD '<password>' CREATEDB;
+CREATE DATABASE "24urenloop" OWNER <username>;
+GRANT ALL ON SCHEMA public TO <username>;
+ALTER SCHEMA public OWNER TO <username>;
 ```
-4. Run `npx prisma migrate dev --name init` to create the database tables
-5. update the .env file with the correct database credentials:
+4. Create a .env file with the correct database credentials:
 ```
 DATABASE_URL=postgres://<username>:<password>@localhost:5432/24urenloop
 ```
+5. Run `npx prisma migrate dev --name init` to create the database tables
 6. Run `python3 initialize_db.py` to fill the database with the necessary dummy data
 7. Run `npm run dev` to start the development server
 8. Go to `localhost:3000` in your browser
