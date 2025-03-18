@@ -42,7 +42,7 @@ export async function POST() {
         });
 
         await prisma.queue.delete({
-            where: { queuePlace: nextRunnerInQueue.queuePlace },
+            where: { id: nextRunnerInQueue.id },
         });
 
         let lapTime = null;
