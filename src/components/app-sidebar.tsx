@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from "react";
-import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle, FileWarningIcon } from "lucide-react";
+import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle, FileWarningIcon, PlaneLanding, PlaneTakeoff} from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 
 import {
@@ -39,6 +39,16 @@ const items = [
         title: "Controls",
         url: "/controls",
         icon: SkipForward,
+    },
+    {
+        title: "Start",
+        url: "/start",
+        icon: PlaneTakeoff,
+    },
+    {
+        title: "Finish",
+        url: "/finish",
+        icon: PlaneLanding,
     },
     {
         title: "Query",
