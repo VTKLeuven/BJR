@@ -12,3 +12,22 @@ export async function GET() {
         return NextResponse.json({ error: 'Failed to fetch groups' }, { status: 500 });
     }
 }
+
+export async function POST(request: Request) {
+    try {
+        const { groupName } = await request.json();
+
+        if (!groupName) {
+            return NextResponse.json({ error: 'Group name is required' }, { status: 400 });
+        }
+
+        const newGroup = await prisma.group.create({
+            data: { groupName },
+        });
+
+        return NextResponse.json(newGroup, { status: 201 });
+    } catch (error: any) {
+        console.error('Error creating group:', error);
+        return NextResponse.json({ error: 'Failed to create group' }, { status: 500 });
+    }
+}

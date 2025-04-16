@@ -15,34 +15,34 @@ model User {
 }
 
 model Runner {
-  id              Int      @id @default(autoincrement())
-  firstName       String
-  lastName        String
-  identification  String   @unique
-  facultyId         Int
+  id               Int      @id @default(autoincrement())
+  firstName        String
+  lastName         String
+  identification   String   @unique
+  facultyId        Int
   registrationTime DateTime @default(now())
-  groupNumber     Int
-  testTime        Float?
-  firstYear       Boolean
-  laps            Lap[]    // Relationship to laps
-  queue          Queue[]
+  groupNumber      Int
+  testTime         Float?
+  firstYear        Boolean
+  laps             Lap[] // Relationship to laps
+  queue            Queue[]
 }
 
 model Group {
-  groupNumber Int    @id
+  groupNumber Int    @id @default(autoincrement())
   groupName   String
 }
 
-model Faculty{
-  id        Int      @id @default(autoincrement())
-  name      String
+model Faculty {
+  id   Int    @id @default(autoincrement())
+  name String
 }
 
-model Queue{
-  id         Int      @id @default(autoincrement())
+model Queue {
+  id         Int    @id @default(autoincrement())
   queuePlace Int
   runnerId   Int
-  runner     Runner   @relation(fields: [runnerId], references: [id])
+  runner     Runner @relation(fields: [runnerId], references: [id])
 }
 
 model Lap {
@@ -52,10 +52,10 @@ model Lap {
   time      String
   raining   Boolean
 
-  runner    Runner   @relation(fields: [runnerId], references: [id])
+  runner Runner @relation(fields: [runnerId], references: [id])
 }
 
 model GlobalState {
-  id       Int     @id @default(1) // Ensures there's only one row
-  raining  Boolean
+  id      Int     @id @default(1) // Ensures there's only one row
+  raining Boolean
 }
