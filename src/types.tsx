@@ -3,7 +3,7 @@ export interface Group {
     groupName: string;
 }
 
-export interface Faculty {
+export interface Kring {
     id: number;
     name: string;
 }

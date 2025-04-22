@@ -1,20 +1,20 @@
 'use client'
 import { useState, useEffect } from "react";
-import { Runner, Group, Faculty } from '@prisma/client';
+import { Runner, Group, Kring } from '@prisma/client';
 
 export default function Page() {
     const [runner, setRunner] = useState({
         firstName: "",
         lastName: "",
         identification: "",
-        facultyId: "",
+        kringId: "",
         groupNumber: "",
         testTime: "",
         firstYear: false,
     });
 
     const [groups, setGroups] = useState<Group[]>([]);
-    const [faculties, setFaculties] = useState<Faculty[]>([]);
+    const [kringen, setKringen] = useState<Kring[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<Runner[]>([]);
     const [selectedRunner, setSelectedRunner] = useState<Runner | null>(null);
@@ -30,14 +30,14 @@ export default function Page() {
             setGroups(data);
         }
 
-        async function fetchFaculties() {
-            const response = await fetch("/api/faculties");
-            const data: Faculty[] = await response.json();
-            setFaculties(data);
+        async function fetchKringen() {
+            const response = await fetch("/api/kringen");
+            const data: Kring[] = await response.json();
+            setKringen(data);
         }
 
         fetchGroups();
-        fetchFaculties();
+        fetchKringen();
     }, []);
 
     useEffect(() => {
@@ -90,7 +90,7 @@ export default function Page() {
                 ...runner,
                 groupNumber: parseInt(runner.groupNumber, 10),
                 testTime: runner.testTime ? parseFloat(runner.testTime.replace(":", ".")) : null,
-                facultyId: parseInt(runner.facultyId, 10),
+                kringId: parseInt(runner.kringId, 10),
             }),
         });
         if (response.ok) {
@@ -100,7 +100,7 @@ export default function Page() {
                 firstName: "",
                 lastName: "",
                 identification: "",
-                facultyId: "",
+                kringId: "",
                 groupNumber: "",
                 testTime: "",
                 firstYear: false,
@@ -190,12 +190,12 @@ export default function Page() {
                            onChange={handleChange} required className="border p-2"/>
                     <input type="text" name="identification" placeholder="Identification Number"
                            value={runner.identification} onChange={handleChange} required className="border p-2"/>
-                    <select name="facultyId" value={runner.facultyId} onChange={handleChange} required
+                    <select name="kringId" value={runner.kringId} onChange={handleChange} required
                             className="border p-2">
-                        <option value="" disabled>Select Faculty</option>
-                        {faculties.map(faculty => (
-                            <option key={faculty.id} value={faculty.id}>
-                                {faculty.name}
+                        <option value="" disabled>Select Kring</option>
+                        {kringen.map(kring => (
+                            <option key={kring.id} value={kring.id}>
+                                {kring.name}
                             </option>
                         ))}
                     </select>

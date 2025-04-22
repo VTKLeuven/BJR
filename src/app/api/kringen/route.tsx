@@ -5,8 +5,8 @@ const prisma = new PrismaClient();
 
 export async function GET() {
     try {
-        const faculties = await prisma.faculty.findMany();
-        return NextResponse.json(faculties);
+        const kringen = await prisma.kring.findMany();
+        return NextResponse.json(kringen);
     } catch {
         return NextResponse.json({ error: 'Failed to fetch faculties' }, { status: 500 });
     }

@@ -19,7 +19,7 @@ model Runner {
   firstName        String
   lastName         String
   identification   String   @unique
-  facultyId        Int
+  kringId          Int      @default(0)
   registrationTime DateTime @default(now())
   groupNumber      Int
   testTime         Float?
@@ -33,7 +33,7 @@ model Group {
   groupName   String
 }
 
-model Faculty {
+model Kring {
   id   Int    @id @default(autoincrement())
   name String
 }

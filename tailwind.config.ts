@@ -61,6 +61,14 @@ const config: Config = {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+		fontSize: {
+			'4xl': '2.5rem',
+			'5xl': '3rem',
+			'6xl': '3.75rem',
+			'7xl': '4.5rem',
+			'8xl': '6rem',
+			'9xl': '8rem', // Add custom sizes as needed
+		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
