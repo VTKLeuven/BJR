@@ -63,10 +63,10 @@ kringen = [
 ]
 
 # Insert data into Runner table
-for first_name, last_name, identification, faculty_id, registration_time, group_number, test_time, first_year in runners:
+for first_name, last_name, identification, kring_id, registration_time, group_number, test_time, first_year in runners:
     cur.execute(
-        sql.SQL('INSERT INTO "Runner" ("firstName", "lastName", "identification", "facultyId", "registrationTime", "groupNumber", "testTime", "firstYear") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT ("identification") DO NOTHING'),
-        [first_name, last_name, identification, faculty_id, registration_time, group_number, test_time, first_year]
+        sql.SQL('INSERT INTO "Runner" ("firstName", "lastName", "identification", "kringId", "registrationTime", "groupNumber", "testTime", "firstYear") VALUES (%s, %s, %s, %s, %s, %s, %s, %s) ON CONFLICT ("identification") DO NOTHING'),
+        [first_name, last_name, identification, kring_id, registration_time, group_number, test_time, first_year]
     )
 
 # Insert data into Group table
@@ -76,7 +76,7 @@ for group_number, group_name in groups:
         [group_number, group_name]
     )
 
-# Insert data into Faculty table
+# Insert data into Kring table
 for name in kringen:
     cur.execute(
         sql.SQL('INSERT INTO "Kring" ("name") VALUES (%s) ON CONFLICT DO NOTHING'),
