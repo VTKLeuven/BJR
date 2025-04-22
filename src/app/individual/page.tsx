@@ -46,6 +46,19 @@ const formatElapsedTime = (startTime: string): string => {
     return `${minutes}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
 };
 
+const formatCountdown = (ms: number): string => {
+    const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const hh = hours.toString().padStart(2, '0');
+    const mm = minutes.toString().padStart(2, '0');
+    const ss = seconds.toString().padStart(2, '0');
+
+    return `${hh}:${mm}:${ss}`;
+};
+
 const IndividueleCompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -69,7 +82,6 @@ const IndividueleCompetitie: React.FC = () => {
                 };
 
                 setData(processedData);
-                setClock(processedData.currentTime);
                 setError(null);
             } catch (err) {
                 setError('Failed to load competition data');
@@ -87,8 +99,13 @@ const IndividueleCompetitie: React.FC = () => {
         // Update clock every second
         const clockIntervalId = setInterval(() => {
             const now = new Date();
-            const timeString = now.toTimeString().split(' ')[0];
-            setClock(timeString);
+            // set target to today at 19:00
+            const target = new Date(now);
+            target.setHours(19, 0, 0, 0);
+
+            // if we're already past 19:00, clamp to zero
+            const diffMs = Math.max(0, target.getTime() - now.getTime());
+            setClock(formatCountdown(diffMs));
         }, 1000);
 
         // Update active runners' displayTime every 10ms

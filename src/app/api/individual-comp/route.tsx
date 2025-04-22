@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Helper to format seconds (float) to M:SS.ms
 function formatTime(seconds: number): string {
@@ -29,6 +30,26 @@ function parseLapTime(time: string): number {
     return Number(minPart) * 60 + Number(sec) + Number(ms) / 1000;
 }
 
+function isWithinTimeWindow(date: Date): boolean {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+
+    // Check if time is between 16:15 and 19:00
+    if (hours > 16 && hours < 19) return true;
+    if (hours === 16 && minutes >= 15) return true;
+    if (hours === 19 && minutes === 0) return true;
+    return false;
+}
+
+async function getActiveLaps(isDev: boolean) {
+    const laps = await prisma.lap.findMany({
+        where: { time: 'null' },
+        include: { runner: true }
+    });
+    return isDev ? laps : laps.filter(l => isWithinTimeWindow(l.startTime));
+}
+
+
 export async function GET() {
     try {
         const now = new Date();
@@ -39,11 +60,8 @@ export async function GET() {
         // Finished = has at least one lap and no in-progress laps
         const finished = runners.filter(r => r.laps.some(l => l.time !== 'null'));
 
-        // Fetch active laps (time == 'null') indicating currently running
-        const activeLaps = await prisma.lap.findMany({
-            where: { time: 'null' },
-            include: { runner: true }
-        });
+        const activeLaps = await getActiveLaps(isDevelopment);
+
 
         // Gather unique kring IDs
         const kringIds = Array.from(new Set([
@@ -58,19 +76,31 @@ export async function GET() {
         // Compute stats for finished runners: best and last lap
         type RunnerStats = typeof finished[0] & { bestSeconds: number; lastSeconds: number };
         const finishedStats: RunnerStats[] = finished.map(r => {
-            const validLaps = r.laps.filter(l => l.time !== 'null');
+            const validLaps = isDevelopment
+                ? r.laps.filter(l => l.time !== 'null')
+                : r.laps.filter(l => l.time !== 'null' && isWithinTimeWindow(l.startTime));
+
+            // Skip runners with no valid laps
+            if (validLaps.length === 0) {
+                return { ...r, bestSeconds: Infinity, lastSeconds: Infinity };
+            }
+
             const times = validLaps.map(l => parseLapTime(l.time));
             const bestSeconds = Math.min(...times);
+
+            // Safe reduce with initial value
             const lastLap = validLaps.reduce((prev, curr) =>
-                new Date(prev.startTime) > new Date(curr.startTime) ? prev : curr
-            );
+                    new Date(prev.startTime) > new Date(curr.startTime) ? prev : curr
+                , validLaps[0]);
+
             const lastSeconds = parseLapTime(lastLap.time);
             return { ...r, bestSeconds, lastSeconds };
         });
 
-
-        // Sort by best time ascending
-        const sortedFinished = finishedStats.sort((a, b) => a.bestSeconds - b.bestSeconds);
+        // Filter out runners with no valid laps before sorting
+        const sortedFinished = finishedStats
+            .filter(r => r.bestSeconds !== Infinity)
+            .sort((a, b) => a.bestSeconds - b.bestSeconds);
 
         // Top 10 finished runners
         const topRunners = sortedFinished.slice(0, 10).map(r => ({
