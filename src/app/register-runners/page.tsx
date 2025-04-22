@@ -65,8 +65,8 @@ export default function Page() {
                 firstName: "",
                 lastName: "",
                 identification: "",
-                kringId: "",
-                groupNumber: "",
+                kringId: "0",
+                groupNumber: "0",
                 testTime: "",
                 firstYear: false,
             });
@@ -105,8 +105,22 @@ export default function Page() {
                            onChange={handleChange} required className="border p-2"/>
                     <input type="text" name="lastName" placeholder="Last Name" value={runner.lastName}
                            onChange={handleChange} required className="border p-2"/>
-                    <input type="text" name="identification" placeholder="Identification Number"
-                           value={runner.identification} onChange={handleChange} required className="border p-2"/>
+                    <input
+                        type="text"
+                        name="identification"
+                        placeholder="Identification Number"
+                        value={runner.identification}
+                        onChange={handleChange}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                const nextElement = document.querySelector('select[name="kringId"]') as HTMLElement;
+                                nextElement?.focus();
+                            }
+                        }}
+                        required
+                        className="border p-2"
+                    />
                     <select name="kringId" value={runner.kringId} onChange={handleChange} required
                             className="border p-2">
                         <option value="0" disabled>No Kring</option>
@@ -138,12 +152,12 @@ export default function Page() {
                             + Create New Group
                         </button>
                     </div>
-                    <input type="text" name="testTime" placeholder="Test Time (mm:ss)" pattern="\d{2}:\d{2}"
+                    {/*<input type="text" name="testTime" placeholder="Test Time (mm:ss)" pattern="\d{2}:\d{2}"
                            value={runner.testTime} onChange={handleChange} className="border p-2"/>
                     <label className="flex items-center space-x-2">
                         <input type="checkbox" name="firstYear" checked={runner.firstYear} onChange={handleChange}/>
                         <span>First Year</span>
-                    </label>
+                    </label>*/}
                     <button type="submit" className="bg-blue-500 text-white p-2 rounded">Add Runner</button>
                 </form>
             </div>
