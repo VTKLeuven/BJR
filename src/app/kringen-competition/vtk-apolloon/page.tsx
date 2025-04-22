@@ -42,7 +42,7 @@ interface CompetitionData {
 const apiService = {
     fetchCompetitionData: async (): Promise<CompetitionData> => {
         try {
-            const response = await axios.get('/api/kringen-comp');
+            const response = await axios.get('/api/kringen-comp?kringNames[]=VTK&kringNames[]=Apolloon');
             return response.data;
         } catch (error) {
             console.error('Error fetching competition data:', error);
@@ -144,8 +144,15 @@ const KringenCompetitie: React.FC = () => {
                                 {/* Sort krings by averageTime and then map */}
                                 {[...data.activeKrings]
                                     .sort((a, b) => {
-                                        const timeA = Number(a.averageTime);
-                                        const timeB = Number(b.averageTime);
+                                        const convertToSeconds = (timeStr: string) => {
+                                            const [minutesPart, secondsPart] = timeStr.split(':');
+                                            const [seconds, milliseconds] = secondsPart.split('.').map(Number);
+
+                                            const minutes = Number(minutesPart);
+                                            return minutes * 60 + seconds + (milliseconds ? milliseconds / 100 : 0);
+                                        };
+                                        const timeA = convertToSeconds(a.averageTime);
+                                        const timeB = convertToSeconds(b.averageTime);
                                         return timeA - timeB;
                                     })
                                     .map((kring, index) => (

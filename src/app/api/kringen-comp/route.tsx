@@ -64,7 +64,7 @@ function formatMsToTime(ms: number): string {
     return `${minutes}:${secStr}.${msStr}`;
 }
 
-export async function GET() {
+export async function GET(request: Request) {
     try {
         const now = new Date();
 
@@ -75,9 +75,10 @@ export async function GET() {
         const diff = nextMinute.getTime() - now.getTime();
         const countdownTime = formatMsToTime(diff);
 
-        // Only consider laps from kringen VTK and Apolloon
+        const url = new URL(request.url);
+        const kringNames = url.searchParams.getAll('kringNames[]'); // Extract 'kringNames[]' from query
         const allowedKrings = await prisma.kring.findMany({
-            where: { name: { in: ['VTK', 'Apolloon'] } }
+            where: { name: { in: kringNames.length ? kringNames : ['VTK', 'Apolloon'] } } // Default if not provided
         });
         const allowedKringIds = allowedKrings.map(k => k.id);
 
@@ -179,7 +180,6 @@ export async function GET() {
             take: 5,
             include: { runner: true }
         });
-        console.log(recentLaps);
         const previousRunners: RunnerResponse[] = recentLaps
             .filter(lap => lap.time && lap.time !== 'null')
             .map(lap => ({
