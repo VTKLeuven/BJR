@@ -24,9 +24,42 @@ groups = [
     (2, "Testgroep 2"),
 ]
 
-faculties = [
-    ("Faculteit Ingenieurswetenschappen"),
-    ("Faculteit Wetenschappen"),
+kringen = [
+    ("Alfa"),
+    ("Apollonia"),
+    ("Apolloon"),
+    ("Atlas"),
+    ("Babyloon"),
+    ("Bios"),
+    ("Canonica"),
+    ("Chemika"),
+    ("Cluster"),
+    ("Crimen"),
+    ("De Kelten"),
+    ("Diana"),
+    ("Docentica"),
+    ("Ekonomika"),
+    ("Eoos"),
+    ("Eros"),
+    ("Farmaceutica"),
+    ("Historia"),
+    ("Industria"),
+    ("Katechetika"),
+    ("KLA"),
+    ("LBK"),
+    ("Mecenas"),
+    ("Medica"),
+    ("Medisoc"),
+    ("Musicologica"),
+    ("NFK"),
+    ("Pedagogische Kring"),
+    ("Politika"),
+    ("Psychologische Kring"),
+    ("Soca"),
+    ("StEIL"),
+    ("VRG"),
+    ("VTK"),
+    ("Wina"),
 ]
 
 # Insert data into Runner table
@@ -44,9 +77,9 @@ for group_number, group_name in groups:
     )
 
 # Insert data into Faculty table
-for name in faculties:
+for name in kringen:
     cur.execute(
-        sql.SQL('INSERT INTO "Faculty" ("name") VALUES (%s) ON CONFLICT DO NOTHING'),
+        sql.SQL('INSERT INTO "Kring" ("name") VALUES (%s) ON CONFLICT DO NOTHING'),
         [name]
     )
 

@@ -5,14 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="52a50b5c-d5a5-4b84-b9f2-737f162130e6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/api/BJR/start-next-runner/route.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app/api/BJR/stop-runner/route.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/faculties/route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/api/kringen/route.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/queue-up/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/queue-up/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/start/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/start/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/types.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/types.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/initialize_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/initialize_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/finish/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/finish/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
