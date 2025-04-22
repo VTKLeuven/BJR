@@ -30,7 +30,7 @@ const items = [
         icon: Users,
     },
     {
-        title: "Kringencompetition",
+        title: "Kringencompetitie",
         url: "/kringen-competition",
         icon: SchildIcon,
     },
