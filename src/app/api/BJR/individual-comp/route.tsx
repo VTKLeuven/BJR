@@ -37,7 +37,7 @@ export async function GET() {
         // Fetch all runners with their laps
         const runners = await prisma.runner.findMany({ include: { laps: true } });
         // Finished = has at least one lap and no in-progress laps
-        const finished = runners.filter(r => r.laps.length > 0 && r.laps.every(l => l.time !== 'null'));
+        const finished = runners.filter(r => r.laps.some(l => l.time !== 'null'));
 
         // Fetch active laps (time == 'null') indicating currently running
         const activeLaps = await prisma.lap.findMany({
@@ -58,15 +58,16 @@ export async function GET() {
         // Compute stats for finished runners: best and last lap
         type RunnerStats = typeof finished[0] & { bestSeconds: number; lastSeconds: number };
         const finishedStats: RunnerStats[] = finished.map(r => {
-            const times = r.laps.map(l => parseLapTime(l.time));
+            const validLaps = r.laps.filter(l => l.time !== 'null');
+            const times = validLaps.map(l => parseLapTime(l.time));
             const bestSeconds = Math.min(...times);
-            // Find the lap with the latest startTime
-            const lastLap = r.laps.reduce((prev, curr) =>
+            const lastLap = validLaps.reduce((prev, curr) =>
                 new Date(prev.startTime) > new Date(curr.startTime) ? prev : curr
             );
             const lastSeconds = parseLapTime(lastLap.time);
             return { ...r, bestSeconds, lastSeconds };
         });
+
 
         // Sort by best time ascending
         const sortedFinished = finishedStats.sort((a, b) => a.bestSeconds - b.bestSeconds);
