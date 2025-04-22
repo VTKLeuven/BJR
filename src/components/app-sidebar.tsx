@@ -31,8 +31,8 @@ const items = [
         icon: TvMinimalPlay,
     },
     {
-        title: "Queue",
-        url: "/queue",
+        title: "Individual",
+        url: "/individual",
         icon: Users,
     },
     {
