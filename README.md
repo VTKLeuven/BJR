@@ -23,7 +23,7 @@ ALTER SCHEMA public OWNER TO <username>;
 ```
 DATABASE_URL=postgres://<username>:<password>@localhost:5432/24urenloop
 ```
-5. Run `npx prisma migrate dev --name init` to create the database tables
+5. Run `npx prisma migrate deploy` to create the database tables
 6. Run `python3 initialize_db.py` to fill the database with the necessary dummy data
 7. Run `npm run dev` to start the development server
 8. Go to `localhost:3000` in your browser
