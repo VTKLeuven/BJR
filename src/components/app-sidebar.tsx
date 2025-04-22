@@ -1,5 +1,5 @@
 'use client'
-import { User, TvMinimalPlay, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
+import { User, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
 import Image from "next/image";
 
 import {

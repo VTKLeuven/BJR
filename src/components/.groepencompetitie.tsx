@@ -40,7 +40,7 @@ const apiService = {
     }
 };
 
-const GroepenCompetitie: React.FC = () => {
+const Groepencompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -173,4 +173,4 @@ const GroepenCompetitie: React.FC = () => {
     );
 };
 
-export default GroepenCompetitie;
+export default Groepencompetitie;
