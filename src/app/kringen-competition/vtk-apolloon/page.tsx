@@ -18,6 +18,15 @@ interface Runner {
     time: string;
 }
 
+interface LeaderboardEntry {
+    lapId: string;
+    runnerId: string;
+    runnerName: string;
+    kringId: string;
+    kringName: string;
+    time: string;
+}
+
 interface CompetitionData {
     countdownTime: string;
     totalRuns: number;
@@ -25,7 +34,7 @@ interface CompetitionData {
     activeRunners: {
         [kringId: string]: Runner[];
     };
-    leaderboard: Kring[];
+    leaderboard: LeaderboardEntry[];
     previousRunners: Runner[];
 }
 
@@ -114,16 +123,19 @@ const KringenCompetitie: React.FC = () => {
                     </div>
                 </div>
 
+                {/* Move the header section outside the columns */}
+                <div className="flex justify-between items-center mb-6">
+                    <h1 className="text-4xl font-bold">Kringencompetitie</h1>
+                    <div className="flex flex-col items-end">
+                        <div id="countdown-timer" className="text-6xl font-bold text-blue-600">
+                            {countdown}
+                        </div>
+                    </div>
+                </div>
+
                 <div className="flex flex-1 space-x-6 overflow-hidden">
                     <div className="w-7/12 flex flex-col space-y-6">
-                        <div className="flex justify-between items-center mb-6">
-                            <h1 className="text-4xl font-bold">Kringencompetitie</h1>
-                            <div className="flex flex-col items-end">
-                                <div id="countdown-timer" className="text-6xl font-bold text-blue-600">
-                                    {countdown}
-                                </div>
-                            </div>
-                        </div>
+                        {/* Remove the header from here */}
 
                         <div className="bg-white rounded-lg shadow-md p-4">
                             <h2 className="text-xl font-bold mb-3">Actieve Kringen</h2>
@@ -132,7 +144,8 @@ const KringenCompetitie: React.FC = () => {
                                     <div
                                         key={kring.id}
                                         id={`active-kring-${index}`}
-                                        className="bg-blue-50 rounded-lg p-4 justify-center"
+                                        className="bg-blue-50 rounded-lg p-4 flex flex-col" // Added flex-col
+                                        style={{ minHeight: '300px' }} // Set a minimum height for consistency
                                     >
                                         <div className="flex justify-center items-center mb-6">
                                             <img
@@ -141,12 +154,16 @@ const KringenCompetitie: React.FC = () => {
                                                 className="kring-logo w-40 h-50 mr-3"
                                             />
                                         </div>
-                                        <div className="flex items-center justify-center mb-2">
-                                            <h3 className="kring-name text-xl font-semibold">{kring.name}</h3>
-                                        </div>
-                                        <div className="flex flex-col items-center">
-                                            <div className="kring-time text-4xl font-bold text-blue-600">{kring.averageTime}</div>
-                                            <div className="text-sm text-gray-600">Gemiddelde tijd</div>
+
+                                        {/* Container that will stick to the bottom */}
+                                        <div className="mt-auto w-full"> {/* mt-auto pushes this to the bottom */}
+                                            <div className="flex items-center justify-center mb-2">
+                                                <h3 className="kring-name text-xl font-semibold">{kring.name}</h3>
+                                            </div>
+                                            <div className="flex flex-col items-center">
+                                                <div className="kring-time text-4xl font-bold text-blue-600">{kring.averageTime}</div>
+                                                <div className="text-sm text-gray-600">Gemiddelde tijd</div>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -191,22 +208,22 @@ const KringenCompetitie: React.FC = () => {
                     </div>
 
                     <div className="w-5/12 flex flex-col space-y-6">
-                        <div className="bg-white rounded-lg shadow-md p-4 flex-1">
-                            <h2 className="text-xl font-bold mb-3">Leaderboard</h2>
-                            <div id="leaderboard-container" className="space-y-3 overflow-hidden" style={{ maxHeight: '40vh' }}>
-                                {data.leaderboard.map((kring, index) => (
-                                    <div
-                                        key={kring.id}
-                                        className={`flex items-center p-2 ${index === 0 ? 'bg-blue-50' : 'bg-gray-50'} rounded-lg`}
-                                    >
+                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden">
+                            <h2 className="text-xl font-bold mb-3">Snelste Lopers</h2>
+                            <div className="space-y-3" style={{ maxHeight: '40vh' }}>
+                                {data.leaderboard.map((entry, index) => (
+                                    <div key={entry.lapId} className={`flex items-center p-2 ${index === 0 ? 'bg-blue-50' : 'bg-gray-50'} rounded-lg`}>
                                         <div className="text-xl font-bold w-8">{index + 1}</div>
                                         <img
-                                            src={kring.logoUrl || "https://via.placeholder.com/40"}
-                                            alt={`${kring.name} Logo`}
-                                            className="w-10 h-11 mr-3"
+                                            src={`/kringen/${entry.kringName.replace(/\s+/g, '')}.png`}
+                                            alt={`${entry.kringName} Logo`}
+                                            className="w-10 h-11 mx-3"
                                         />
-                                        <span className="flex-1 font-semibold truncate">{kring.name}</span>
-                                        <span className="text-xl font-bold text-blue-600">{kring.averageTime}</span>
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="font-semibold truncate">{entry.runnerName}</h3>
+                                            <p className="text-sm text-gray-600 truncate">{entry.kringName}</p>
+                                        </div>
+                                        <div className="text-xl font-bold text-blue-600 ml-4">{entry.time}</div>
                                     </div>
                                 ))}
                             </div>
