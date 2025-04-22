@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import RunnerTimer from '@/components/RunnerTimer'
 
 interface Kring {
     id: string;
@@ -41,7 +42,7 @@ interface CompetitionData {
 const apiService = {
     fetchCompetitionData: async (): Promise<CompetitionData> => {
         try {
-            const response = await axios.get('/api/kringen-comp');
+            const response = await axios.get('/api/kringen-comp?kringNames[]=VTK&kringNames[]=Apolloon');
             return response.data;
         } catch (error) {
             console.error('Error fetching competition data:', error);
@@ -140,33 +141,52 @@ const KringenCompetitie: React.FC = () => {
                         <div className="bg-white rounded-lg shadow-md p-4">
                             <h2 className="text-xl font-bold mb-3">Actieve Kringen</h2>
                             <div className="grid grid-cols-2 gap-6 justify-center">
-                                {data.activeKrings.map((kring, index) => (
-                                    <div
-                                        key={kring.id}
-                                        id={`active-kring-${index}`}
-                                        className="bg-blue-50 rounded-lg p-4 flex flex-col" // Added flex-col
-                                        style={{ minHeight: '300px' }} // Set a minimum height for consistency
-                                    >
-                                        <div className="flex justify-center items-center mb-6">
-                                            <img
-                                                src={kring.logoUrl || "https://via.placeholder.com/40"}
-                                                alt={`${kring.name} Logo`}
-                                                className="kring-logo w-40 h-50 mr-3"
-                                            />
-                                        </div>
+                                {/* Sort krings by averageTime and then map */}
+                                {[...data.activeKrings]
+                                    .sort((a, b) => {
+                                        const convertToSeconds = (timeStr: string) => {
+                                            const [minutesPart, secondsPart] = timeStr.split(':');
+                                            const [seconds, milliseconds] = secondsPart.split('.').map(Number);
 
-                                        {/* Container that will stick to the bottom */}
-                                        <div className="mt-auto w-full"> {/* mt-auto pushes this to the bottom */}
-                                            <div className="flex items-center justify-center mb-2">
-                                                <h3 className="kring-name text-xl font-semibold">{kring.name}</h3>
+                                            const minutes = Number(minutesPart);
+                                            return minutes * 60 + seconds + (milliseconds ? milliseconds / 100 : 0);
+                                        };
+                                        const timeA = convertToSeconds(a.averageTime);
+                                        const timeB = convertToSeconds(b.averageTime);
+                                        return timeA - timeB;
+                                    })
+                                    .map((kring, index) => (
+                                        <div
+                                            key={kring.id}
+                                            id={`active-kring-${index}`}
+                                            className="bg-blue-50 rounded-lg p-4 flex flex-col relative" // Added relative for positioning
+                                            style={{ minHeight: '300px' }}
+                                        >
+                                            {/* Blue number indicator */}
+                                            <div className="absolute -top-3 -left-3 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold">
+                                                {index + 1}.
                                             </div>
-                                            <div className="flex flex-col items-center">
-                                                <div className="kring-time text-4xl font-bold text-blue-600">{kring.averageTime}</div>
-                                                <div className="text-sm text-gray-600">Gemiddelde tijd</div>
+
+                                            <div className="flex justify-center items-center mb-6">
+                                                <img
+                                                    src={kring.logoUrl || "https://via.placeholder.com/40"}
+                                                    alt={`${kring.name} Logo`}
+                                                    className="kring-logo w-40 h-50 mr-3"
+                                                />
+                                            </div>
+
+                                            {/* Container that will stick to the bottom */}
+                                            <div className="mt-auto w-full">
+                                                <div className="flex items-center justify-center mb-2">
+                                                    <h3 className="kring-name text-xl font-semibold">{kring.name}</h3>
+                                                </div>
+                                                <div className="flex flex-col items-center">
+                                                    <div className="kring-time text-4xl font-bold text-blue-600">{kring.averageTime}</div>
+                                                    <div className="text-sm text-gray-600">Gemiddelde tijd</div>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    ))}
                             </div>
                         </div>
 
@@ -195,7 +215,7 @@ const KringenCompetitie: React.FC = () => {
                                                             id={`runner-timer-${kringIndex * 10 + runnerIndex}`}
                                                             className="text-2xl font-bold text-blue-600 ml-2"
                                                         >
-                                                            {runner.time}
+                                                               <RunnerTimer startTime={runner.time} />
                                                         </div>
                                                     </div>
                                                 ))}
