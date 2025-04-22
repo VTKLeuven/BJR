@@ -168,7 +168,7 @@ const IndividueleCompetitie: React.FC = () => {
                                     <img
                                         src={runner.imageUrl || "https://via.placeholder.com/40"}
                                         alt={`${runner.kringName} Logo`}
-                                        className="w-10 h-10 mr-3"
+                                        className="w-10 h-11 mr-3"
                                     />
                                     <div className="flex-1 min-w-0">
                                         <h3 className="text-lg font-semibold truncate">{runner.name}</h3>
@@ -194,7 +194,7 @@ const IndividueleCompetitie: React.FC = () => {
                                         <img
                                             src={runner.imageUrl || "https://via.placeholder.com/40"}
                                             alt={`${runner.kringName} Logo`}
-                                            className="w-10 h-10 mr-3"
+                                            className="w-10 h-11 mr-3"
                                         />
                                         <div className="flex-1 min-w-0">
                                             <h3 className="text-lg font-semibold truncate">{runner.name}</h3>
@@ -228,7 +228,7 @@ const IndividueleCompetitie: React.FC = () => {
                                                 <img
                                                     src={runner.imageUrl || "https://via.placeholder.com/40"}
                                                     alt={`${runner.kringName} Logo`}
-                                                    className="w-8 h-8 mr-2"/>
+                                                    className="w-10 h-11 mr-2"/>
                                                 <span className="truncate">{runner.name}</span>
                                             </td>
                                             <td className="py-2">{runner.kringName.replace('Kring ', '')}</td>

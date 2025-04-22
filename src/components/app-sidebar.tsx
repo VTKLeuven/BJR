@@ -1,5 +1,5 @@
 'use client'
-import { User, TvMinimalPlay, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
+import { User, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -30,7 +30,7 @@ const items = [
         icon: Users,
     },
     {
-        title: "Kringencompetition",
+        title: "Kringencompetitie",
         url: "/kringen-competition",
         icon: SchildIcon,
     },
