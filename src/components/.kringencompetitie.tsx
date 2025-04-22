@@ -8,7 +8,7 @@ interface Kring {
     logoUrl: string;
     averageTime: string; // Format: M:SS.ms
 }
-o
+
 interface Runner {
     id: string;
     name: string;
