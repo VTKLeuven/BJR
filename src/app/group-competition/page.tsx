@@ -147,7 +147,7 @@ const IndividueleCompetitie: React.FC = () => {
             <div className="container mx-auto px-6 py-4 h-full flex flex-col max-w-screen-2xl">
                 {/* Header with clock */}
                 <div className="flex justify-between items-center mb-6">
-                    <h1 className="text-4xl font-bold">Individuele Competitie</h1>
+                    <h1 className="text-4xl font-bold">Groepen Competitie</h1>
                     <div id="live-clock" className="text-6xl font-bold text-red-600">
                         {clock}
                     </div>

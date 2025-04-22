@@ -43,7 +43,7 @@ const apiService = {
 };
  className={`flex items-center p-2 ${index === 0 ? 'bg-red-50' : 'bg-gray-50'} rounded-lg`}
                                 >
-const KringenCompetitie: React.FC = () => {
+const Kringencompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -230,4 +230,4 @@ const KringenCompetitie: React.FC = () => {
     );
 };
 
-export default KringenCompetitie;
+export default Kringencompetitie;

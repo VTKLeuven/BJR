@@ -32,7 +32,7 @@ const apiService = {
 
 };
 
-const IndividueleCompetitie: React.FC = () => {
+const Individuelecompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -192,4 +192,4 @@ const IndividueleCompetitie: React.FC = () => {
     );
 };
 
-export default IndividueleCompetitie;
+export default Individuelecompetitie;
