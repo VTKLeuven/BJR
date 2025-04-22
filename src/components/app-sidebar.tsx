@@ -20,9 +20,9 @@ const SchildIcon = () => (
 // Menu items.
 const items = [
     {
-        title: "Individual",
-        url: "/individual",
-        icon: User,
+        title: "Kringencompetitie",
+        url: "/kringen-competition",
+        icon: SchildIcon,
     },
     {
         title: "Group Competition",
@@ -30,9 +30,9 @@ const items = [
         icon: Users,
     },
     {
-        title: "Kringencompetitie",
-        url: "/kringen-competition",
-        icon: SchildIcon,
+        title: "Individual",
+        url: "/individual",
+        icon: User,
     },
     {
         title: "Register Runners",
