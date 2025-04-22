@@ -16,7 +16,7 @@ export default function StartPage() {
                         clearInterval(interval);
 
                         // Send the identification to the API after 5 seconds
-                        fetch("/api/BJR/start-next-runner", {
+                        fetch("/api/start-next-runner", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ identification }),

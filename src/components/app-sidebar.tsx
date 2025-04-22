@@ -1,7 +1,5 @@
 'use client'
-import { useState, useEffect } from "react";
-import { TvMinimalPlay, ChartNoAxesCombined, UserRoundPlus, Users, Search, SkipForward, CloudDrizzle, FileWarningIcon, PlaneLanding, PlaneTakeoff} from "lucide-react";
-import { Switch } from "@/components/ui/switch";
+import { TvMinimalPlay, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
 
 import {
     Sidebar,
@@ -16,29 +14,24 @@ import {
 // Menu items.
 const items = [
     {
-        title: "Statistics",
-        url: "/statistics",
-        icon: ChartNoAxesCombined,
-    },
-    {
-        title: "Queue up",
-        url: "/queue-up",
-        icon: UserRoundPlus,
-    },
-    {
-        title: "Live runners",
-        url: "/live-runners",
-        icon: TvMinimalPlay,
-    },
-    {
         title: "Individual",
         url: "/individual",
         icon: Users,
     },
     {
-        title: "Controls",
-        url: "/controls",
-        icon: SkipForward,
+        title: "Group Competition",
+        url: "/group-competition",
+        icon: TvMinimalPlay,
+    },
+    {
+        title: "Kringencompetition",
+        url: "/kringen-competition",
+        icon: TvMinimalPlay,
+    },
+    {
+        title: "Register Runners",
+        url: "/register-runners",
+        icon: UserRoundPlus,
     },
     {
         title: "Start",
@@ -49,44 +42,10 @@ const items = [
         title: "Finish",
         url: "/finish",
         icon: PlaneLanding,
-    },
-    {
-        title: "Query",
-        url: "/query",
-        icon: Search,
-    },
-    {
-        title: "DEV ONLY RESET",
-        url: "/dev-only-reset",
-        icon: FileWarningIcon,
     }
 ];
 
 export function AppSidebar() {
-    const [raining, setRaining] = useState(false);
-
-    useEffect(() => {
-        // Fetch the current raining state from the database
-        async function fetchRainingState() {
-            const response = await fetch("/api/global-state");
-            const data = await response.json();
-            setRaining(data.raining);
-        }
-
-        fetchRainingState();
-    }, []);
-
-    const handleRainingToggle = async () => {
-        const newRainingState = !raining;
-        setRaining(newRainingState);
-
-        // Update the raining state in the database
-        await fetch("/api/global-state", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ raining: newRainingState }),
-        });
-    };
 
     return (
         <Sidebar>
@@ -104,16 +63,6 @@ export function AppSidebar() {
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
                             ))}
-
-                            <SidebarMenuItem>
-                                <SidebarMenuButton asChild>
-                                    <div className="flex items-center">
-                                        <CloudDrizzle />
-                                        <span>Raining: </span>
-                                        <Switch checked={raining} onCheckedChange={handleRainingToggle} />
-                                    </div>
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>

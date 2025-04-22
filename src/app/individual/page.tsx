@@ -24,7 +24,7 @@ interface CompetitionData {
 const apiService = {
     fetchCompetitionData: async (): Promise<CompetitionData> => {
         try {
-            const response = await axios.get('/api/BJR/individual-comp');
+            const response = await axios.get('/api/individual-comp');
             return response.data;
         } catch (error) {
             console.error('Error fetching competition data:', error);

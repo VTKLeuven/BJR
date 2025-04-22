@@ -114,7 +114,7 @@ export async function GET() {
         const data = { currentTime, topRunners, activeRunners, previousRunners };
         return NextResponse.json(data);
     } catch (error) {
-        console.error('Error in GET /api/BJR/individual-comp:', error);
+        console.error('Error in GET /api/individual-comp:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     } finally {
         await prisma.$disconnect();

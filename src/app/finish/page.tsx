@@ -8,7 +8,7 @@ export default function FinishPage() {
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && identification.trim()) {
             // Send the identification to the API
-            fetch("/api/BJR/stop-runner", {
+            fetch("/api/stop-runner", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ identification }),
