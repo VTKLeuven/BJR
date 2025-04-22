@@ -6,30 +6,42 @@ export default function StartPage() {
     const [countdown, setCountdown] = useState(0);
     const inputRef = useRef<HTMLInputElement>(null);
 
+    const handleSubmit = () => {
+        if (!identification.trim()) return;
+
+        setCountdown(5);
+        const interval = setInterval(async () => {
+            setCountdown((prev) => {
+                if (prev === 1) {
+                    clearInterval(interval);
+                    fetch("/api/start-next-runner", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ identification }),
+                    }).then(() => {
+                        setIdentification("");
+                        inputRef.current?.focus();
+                    });
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        if (value.length <= 14) {
+            setIdentification(value);
+        }
+    };
+
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && identification.trim()) {
-            // Start the countdown
-            setCountdown(5);
-            const interval = setInterval(async () => {
-                setCountdown((prev) => {
-                    if (prev === 1) {
-                        clearInterval(interval);
-
-                        // Send the identification to the API after 5 seconds
-                        fetch("/api/start-next-runner", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ identification }),
-                        }).then(() => {
-                            setIdentification(""); // Reset input field after sending
-                            inputRef.current?.focus(); // Focus the input field
-                        });
-
-                        return 0;
-                    }
-                    return prev - 1;
-                });
-            }, 1000);
+        if (identification.length === 14 && e.key.length === 1) {
+            e.preventDefault(); // Prevent the 15th character from being entered
+            handleSubmit();     // Trigger submit
+        } else if (e.key === "Enter") {
+            handleSubmit();
         }
     };
 
@@ -44,7 +56,7 @@ export default function StartPage() {
                     type="text"
                     placeholder="Enter Identification"
                     value={identification}
-                    onChange={(e) => setIdentification(e.target.value)}
+                    onChange={handleChange}
                     onKeyPress={handleKeyPress}
                     className="border p-2 text-center"
                 />
