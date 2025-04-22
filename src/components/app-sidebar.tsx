@@ -1,5 +1,6 @@
 'use client'
-import { TvMinimalPlay, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
+import { User, TvMinimalPlay, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
+import Image from "next/image";
 
 import {
     Sidebar,
@@ -11,22 +12,27 @@ import {
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
+
+const SchildIcon = () => (
+    <Image src="/schild.svg" alt="Schild Icon" width={16} height={16} />
+);
+
 // Menu items.
 const items = [
     {
         title: "Individual",
         url: "/individual",
-        icon: Users,
+        icon: User,
     },
     {
         title: "Group Competition",
         url: "/group-competition",
-        icon: TvMinimalPlay,
+        icon: Users,
     },
     {
         title: "Kringencompetition",
         url: "/kringen-competition",
-        icon: TvMinimalPlay,
+        icon: SchildIcon,
     },
     {
         title: "Register Runners",
