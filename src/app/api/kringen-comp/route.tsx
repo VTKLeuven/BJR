@@ -130,38 +130,56 @@ export async function GET() {
                 time: lap.time!
             } as LeaderboardEntry));
 
-        // Active runners: runners with pending laps
+        // Active runners: those with a lap time of 'null'
         const pendingLaps = await prisma.lap.findMany({
             where: {
                 runner: { kringId: { in: allowedKringIds } },
                 time: 'null'
+            },
+            select: {
+                runnerId: true,
+                startTime: true
             }
         });
-        const uniqueRunnerIds = Array.from(new Set(pendingLaps.map(l => l.runnerId)));
-        const pendingRunners = await prisma.runner.findMany({ where: { id: { in: uniqueRunnerIds } } });
+        const startTimeByRunner = new Map<number, Date>();
+        pendingLaps.forEach(lap => {
+            startTimeByRunner.set(lap.runnerId, lap.startTime);
+        });
+        const uniqueRunnerIds = Array.from(startTimeByRunner.keys());
+        const pendingRunners = await prisma.runner.findMany({
+            where: { id: { in: uniqueRunnerIds } }
+        });
         const activeRunners: Record<string, RunnerResponse[]> = {};
         pendingRunners.forEach(runner => {
             const krId = runner.kringId;
             const name = `${runner.firstName} ${runner.lastName}`;
+            const startTime = startTimeByRunner.get(runner.id)!;
+
             const resp: RunnerResponse = {
                 id: runner.id.toString(),
                 name,
                 kringId: krId.toString(),
                 kringName: kringNameMap[krId] || '',
                 imageUrl: `/kringen/${kringNameMap[krId].replaceAll(' ', '')}.png`,
-                time: '0:00.00'
+
+                time: startTime.toISOString()
             };
+
             if (!activeRunners[krId]) activeRunners[krId] = [];
             activeRunners[krId].push(resp);
         });
 
         // Previous runners: last 5 completed laps
         const recentLaps = await prisma.lap.findMany({
-            where: { runner: { kringId: { in: allowedKringIds } } },
+            where: {
+                runner: { kringId: { in: allowedKringIds } },
+                time: { not: 'null' } // This excludes laps where time equals the string 'null'
+            },
             orderBy: { startTime: 'desc' },
             take: 5,
             include: { runner: true }
         });
+        console.log(recentLaps);
         const previousRunners: RunnerResponse[] = recentLaps
             .filter(lap => lap.time && lap.time !== 'null')
             .map(lap => ({
