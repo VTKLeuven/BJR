@@ -5,14 +5,14 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
-    const { firstName, lastName, identification, facultyId, groupNumber, testTime, firstYear } = await req.json();
+    const { firstName, lastName, identification, kringId, groupNumber, testTime, firstYear } = await req.json();
     try {
         const newRunner = await prisma.runner.create({
             data: {
                 firstName,
                 lastName,
                 identification,
-                facultyId,
+                kringId,
                 registrationTime: new Date(), // Set to current time
                 groupNumber,
                 testTime,

@@ -10,7 +10,8 @@ interface Runner {
     imageUrl: string;
     time: string;       // Format: M:SS.ms
     bestTime?: string;  // Format: M:SS.ms
-    currentTime?: string; // For active runners, format: MM:SS.ms
+    currentTime: string;  // Original ISO timestamp ("2025-04-22T10:07:31.340Z")
+    displayTime: string; // Formatted mm:ss:ms display
 }
 
 interface CompetitionData {
@@ -30,14 +31,25 @@ const apiService = {
             throw error;
         }
     }
+};
 
+// Format elapsed time as mm:ss:ms
+const formatElapsedTime = (startTime: string): string => {
+    const start = new Date(startTime).getTime();
+    const now = Date.now();
+    const elapsedMs = Math.max(0, now - start);
+
+    const minutes = Math.floor(elapsedMs / 60000);
+    const seconds = Math.floor((elapsedMs % 60000) / 1000);
+    const milliseconds = Math.floor((elapsedMs % 1000) / 10);
+
+    return `${minutes}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(2, '0')}`;
 };
 
 const IndividueleCompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-
     const [clock, setClock] = useState<string>('');
 
     useEffect(() => {
@@ -45,10 +57,20 @@ const IndividueleCompetitie: React.FC = () => {
             try {
                 setLoading(true);
                 const competitionData = await apiService.fetchCompetitionData();
-                setData(competitionData);
-                setClock(competitionData.currentTime);
-                setError(null);
 
+                // Process active runners to include startTime and initial displayTime
+                const processedData = {
+                    ...competitionData,
+                    activeRunners: competitionData.activeRunners.map(runner => ({
+                        ...runner,
+                        startTime: runner.currentTime || new Date().toISOString(),
+                        displayTime: formatElapsedTime(runner.currentTime || new Date().toISOString())
+                    }))
+                };
+
+                setData(processedData);
+                setClock(processedData.currentTime);
+                setError(null);
             } catch (err) {
                 setError('Failed to load competition data');
                 console.error(err);
@@ -59,17 +81,35 @@ const IndividueleCompetitie: React.FC = () => {
 
         fetchData();
 
+        // Update data every 3 seconds
         const dataIntervalId = setInterval(fetchData, 3000);
 
+        // Update clock every second
         const clockIntervalId = setInterval(() => {
             const now = new Date();
             const timeString = now.toTimeString().split(' ')[0];
             setClock(timeString);
         }, 1000);
 
+        // Update active runners' displayTime every 10ms
+        const timerIntervalId = setInterval(() => {
+            setData(prevData => {
+                if (!prevData) return prevData;
+
+                return {
+                    ...prevData,
+                    activeRunners: prevData.activeRunners.map(runner => ({
+                        ...runner,
+                        displayTime: formatElapsedTime(runner.currentTime)
+                    }))
+                };
+            });
+        }, 10);
+
         return () => {
             clearInterval(dataIntervalId);
             clearInterval(clockIntervalId);
+            clearInterval(timerIntervalId);
         };
     }, []);
 
@@ -99,7 +139,7 @@ const IndividueleCompetitie: React.FC = () => {
                 {/* Main content area - Two column layout */}
                 <div className="flex flex-1 space-x-6">
                     {/* Left column - Leaderboard only */}
-                    <div className="w-1/2 bg-white rounded-lg shadow-md p-6">
+                    <div className="w-2/5 bg-white rounded-lg shadow-md p-6">
                         <h2 className="text-2xl font-bold mb-4">Top 10 Beste Tijden</h2>
                         <div className="space-y-3" id="leaderboard-container">
                             {data.topRunners.map((runner, index) => (
@@ -124,12 +164,12 @@ const IndividueleCompetitie: React.FC = () => {
                     </div>
 
                     {/* Right column - Two rows (Running now + Previous runners) */}
-                    <div className="w-1/2 flex flex-col space-y-6">
+                    <div className="w-3/5 flex flex-col space-y-6">
                         {/* Top row - Running now with max 4 runners */}
                         <div className="bg-white rounded-lg shadow-md p-6 flex-1">
                             <h2 className="text-2xl font-bold mb-4">Nu Aan Het Lopen</h2>
                             <div className="grid grid-cols-2 gap-4" id="running-now-container">
-                                {data.activeRunners.map((runner, index) => (
+                                {data.activeRunners.map((runner) => (
                                     <div
                                         key={runner.id}
                                         className="bg-red-50 rounded-lg p-4 flex items-center"
@@ -143,11 +183,8 @@ const IndividueleCompetitie: React.FC = () => {
                                             <h3 className="text-lg font-semibold truncate">{runner.name}</h3>
                                             <p className="text-sm text-gray-600 truncate">{runner.kringName}</p>
                                         </div>
-                                        <div
-                                            id={`runner-timer-${index}`}
-                                            className="text-2xl font-bold text-red-600 ml-2"
-                                        >
-                                            {runner.currentTime}
+                                        <div className="text-2xl font-bold text-red-600 ml-2">
+                                            {runner.displayTime}
                                         </div>
                                     </div>
                                 ))}
