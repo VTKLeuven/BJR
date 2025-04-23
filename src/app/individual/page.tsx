@@ -101,7 +101,6 @@ const IndividueleCompetitie: React.FC = () => {
             const now = new Date();
             // set target to today at 19:00
             const target = new Date(now);
-            target.setDate(target.getDate() + 1);
             target.setHours(19, 0, 0, 0);
 
             // if we're already past 19:00, clamp to zero
