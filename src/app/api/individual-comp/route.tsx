@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import {NextResponse} from 'next/server'
+import {PrismaClient} from '@prisma/client'
 
 const prisma = new PrismaClient();
-const isDevelopment = process.env.NODE_ENV === 'development';
 
 // Helper to format seconds (float) to M:SS.ms
 function formatTime(seconds: number): string {
@@ -30,23 +29,14 @@ function parseLapTime(time: string): number {
     return Number(minPart) * 60 + Number(sec) + Number(ms) / 1000;
 }
 
-function isWithinTimeWindow(date: Date): boolean {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-
-    // Check if time is between 16:15 and 19:00
-    if (hours > 16 && hours < 19) return true;
-    if (hours === 16 && minutes >= 15) return true;
-    if (hours === 19 && minutes === 0) return true;
-    return false;
-}
-
-async function getActiveLaps(isDev: boolean) {
-    const laps = await prisma.lap.findMany({
-        where: { time: 'null' },
-        include: { runner: true }
-    });
-    return isDev ? laps : laps.filter(l => isWithinTimeWindow(l.startTime));
+async function getActiveLaps() {
+    return prisma.lap.findMany({
+        where: {
+            time: 'null',
+            competition: 5,
+        },
+        include: {runner: true}
+    })
 }
 
 
@@ -60,7 +50,7 @@ export async function GET() {
         // Finished = has at least one lap and no in-progress laps
         const finished = runners.filter(r => r.laps.some(l => l.time !== 'null'));
 
-        const activeLaps = await getActiveLaps(isDevelopment);
+        const activeLaps = await getActiveLaps();
 
 
         // Gather unique kring IDs
@@ -76,9 +66,7 @@ export async function GET() {
         // Compute stats for finished runners: best and last lap
         type RunnerStats = typeof finished[0] & { bestSeconds: number; lastSeconds: number };
         const finishedStats: RunnerStats[] = finished.map(r => {
-            const validLaps = isDevelopment
-                ? r.laps.filter(l => l.time !== 'null')
-                : r.laps.filter(l => l.time !== 'null' && isWithinTimeWindow(l.startTime));
+            const validLaps = r.laps.filter(l => l.time !== 'null' && l.competition===5);
 
             // Skip runners with no valid laps
             if (validLaps.length === 0) {
