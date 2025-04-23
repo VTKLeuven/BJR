@@ -42,7 +42,7 @@ interface CompetitionData {
 const apiService = {
     fetchCompetitionData: async (): Promise<CompetitionData> => {
         try {
-            const response = await axios.get('/api/kringen-comp?kringNames[]=LBK&kringNames[]=VRG');
+            const response = await axios.get('/api/kringen-comp?kringNames[]=LBK&kringNames[]=VRG&competition=2');
             return response.data;
         } catch (error) {
             console.error('Error fetching competition data:', error);

@@ -77,6 +77,7 @@ export async function GET(request: Request) {
 
         const url = new URL(request.url);
         const kringNames = url.searchParams.getAll('kringNames[]'); // Extract 'kringNames[]' from query
+        const compnr = Number(url.searchParams.get('competition')) || 0; // Default to 0 if not provided
         const allowedKrings = await prisma.kring.findMany({
             where: { name: { in: kringNames.length ? kringNames : ['VTK', 'Apolloon'] } } // Default if not provided
         });
@@ -84,7 +85,10 @@ export async function GET(request: Request) {
 
         // Fetch all laps for those kringen, including runner
         const allLaps = await prisma.lap.findMany({
-            where: { runner: { kringId: { in: allowedKringIds } } },
+            where: {
+                runner: { kringId: { in: allowedKringIds } },
+                competition: compnr // Add this condition
+            },
             include: { runner: true }
         });
 
@@ -135,6 +139,7 @@ export async function GET(request: Request) {
         const pendingLaps = await prisma.lap.findMany({
             where: {
                 runner: { kringId: { in: allowedKringIds } },
+                competition: compnr,
                 time: 'null'
             },
             select: {
@@ -174,6 +179,7 @@ export async function GET(request: Request) {
         const recentLaps = await prisma.lap.findMany({
             where: {
                 runner: { kringId: { in: allowedKringIds } },
+                competition: compnr,
                 time: { not: 'null' } // This excludes laps where time equals the string 'null'
             },
             orderBy: { startTime: 'desc' },
