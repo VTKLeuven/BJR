@@ -68,13 +68,17 @@ const KringenCompetitie: React.FC = () => {
             const diff = target.getTime() - now.getTime();
 
             if (diff <= 0) {
-                setCountdown('00:00');
+                setCountdown('00:00:00');
                 return;
             }
 
-            const minutes = Math.floor(diff / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setCountdown(
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+            );
         };
 
         updateCountdown();
@@ -145,12 +149,26 @@ const KringenCompetitie: React.FC = () => {
                                 {[...data.activeKrings]
                                     .sort((a, b) => {
                                         const convertToSeconds = (timeStr: string) => {
-                                            const [minutesPart, secondsPart] = timeStr.split(':');
-                                            const [seconds, milliseconds] = secondsPart.split('.').map(Number);
-
-                                            const minutes = Number(minutesPart);
-                                            return minutes * 60 + seconds + (milliseconds ? milliseconds / 100 : 0);
+                                            try {
+                                                const [minutesPart, secondsPart] = timeStr.split(':');
+                                                const minutes = parseInt(minutesPart, 10);
+                                                let seconds = 0;
+                                                let milliseconds = 0;
+                                                if (secondsPart.includes('.')) {
+                                                    const [sec, ms] = secondsPart.split('.');
+                                                    seconds = parseInt(sec, 10);
+                                                    milliseconds = parseInt(ms.padEnd(3, '0'), 10);
+                                                } else {
+                                                    seconds = parseInt(secondsPart, 10);
+                                                }
+                                                const totalSeconds = minutes * 60 + seconds + milliseconds / 1000;
+                                                return totalSeconds;
+                                            } catch (error) {
+                                                console.error(`Error parsing time string "${timeStr}"`, error);
+                                                return 0;
+                                            }
                                         };
+                                        console.log(a.averageTime)
                                         const timeA = convertToSeconds(a.averageTime);
                                         const timeB = convertToSeconds(b.averageTime);
                                         return timeA - timeB;

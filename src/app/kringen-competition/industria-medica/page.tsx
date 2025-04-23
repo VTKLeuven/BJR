@@ -60,20 +60,24 @@ const KringenCompetitie: React.FC = () => {
     useEffect(() => {
         const target = new Date();
         target.setDate(target.getDate() + 1);
-        target.setHours(13, 40, 0, 0);
+        target.setHours(15, 10, 0, 0); // Today at 15:10
 
         const updateCountdown = () => {
             const now = new Date();
             const diff = target.getTime() - now.getTime();
 
             if (diff <= 0) {
-                setCountdown('00:00');
+                setCountdown('00:00:00');
                 return;
             }
 
-            const minutes = Math.floor(diff / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setCountdown(
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+            );
         };
 
         updateCountdown();

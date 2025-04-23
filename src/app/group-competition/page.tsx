@@ -91,6 +91,37 @@ const Groepencompetitie: React.FC = () => {
     const [data, setData] = useState<CompetitionData | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const [countdown, setCountdown] = useState<string>('00:00');
+
+    // Hardcoded countdown to 15:10
+    useEffect(() => {
+        const target = new Date();
+        target.setDate(target.getDate() + 1);
+        target.setHours(15, 10, 0, 0); // Today at 15:10
+
+        const updateCountdown = () => {
+            const now = new Date();
+            const diff = target.getTime() - now.getTime();
+
+            if (diff <= 0) {
+                setCountdown('00:00:00');
+                return;
+            }
+
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setCountdown(
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
+            );
+        };
+
+        updateCountdown();
+        const intervalId = setInterval(updateCountdown, 1000);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -112,32 +143,6 @@ const Groepencompetitie: React.FC = () => {
         const intervalId = setInterval(fetchData, 2000);
 
         return () => clearInterval(intervalId);
-    }, []);
-
-    const [countdown, setCountdown] = useState<string>('00:00');
-    useEffect(() => {
-        const updateCountdown = () => {
-            const now = new Date();
-            const target = new Date(now);
-            target.setDate(target.getDate() + 1);
-            target.setHours(16, 15, 0, 0); // Target 16:15 today
-
-            const diff = target.getTime() - now.getTime();
-
-            if (diff <= 0) {
-                setCountdown('00:00');
-                return;
-            }
-
-            const minutes = Math.floor(diff / 60000);
-            const seconds = Math.floor((diff % 60000) / 1000);
-            setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
-        };
-
-        updateCountdown();
-        const countdownIntervalId = setInterval(updateCountdown, 1000);
-
-        return () => clearInterval(countdownIntervalId);
     }, []);
 
     // Loading state
