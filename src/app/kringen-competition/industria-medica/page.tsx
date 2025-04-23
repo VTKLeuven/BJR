@@ -59,25 +59,20 @@ const KringenCompetitie: React.FC = () => {
 
     useEffect(() => {
         const target = new Date();
-        target.setDate(target.getDate() + 1);
-        target.setHours(15, 10, 0, 0); // Today at 15:10
+        target.setHours(13, 40, 0, 0);
 
         const updateCountdown = () => {
             const now = new Date();
             const diff = target.getTime() - now.getTime();
 
             if (diff <= 0) {
-                setCountdown('00:00:00');
+                setCountdown('00:00');
                 return;
             }
 
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            setCountdown(
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-            );
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
         };
 
         updateCountdown();
@@ -166,7 +161,7 @@ const KringenCompetitie: React.FC = () => {
                                             style={{ minHeight: '300px' }}
                                         >
                                             {/* Blue number indicator */}
-                                            <div className="absolute -top-3 -left-3 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold">
+                                            <div className="absolute bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold">
                                                 {index + 1}.
                                             </div>
 
@@ -230,10 +225,11 @@ const KringenCompetitie: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="w-5/12 flex flex-col space-y-6">
-                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden">
+                    <div className="w-5/12 flex flex-col space-y-6 h-[90vh]"> {/* Define height */}
+                        {/* Top Container */}
+                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden flex flex-col">
                             <h2 className="text-xl font-bold mb-3">Snelste Lopers</h2>
-                            <div className="space-y-3" style={{ maxHeight: '45vh' }}>
+                            <div className="space-y-3 overflow-auto h-full">
                                 {data.leaderboard.map((entry, index) => (
                                     <div key={entry.lapId} className={`flex items-center p-2 ${index === 0 ? 'bg-blue-50' : 'bg-gray-50'} rounded-lg`}>
                                         <div className="text-xl font-bold w-8">{index + 1}</div>
@@ -252,9 +248,10 @@ const KringenCompetitie: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-md p-4 flex-1">
+                        {/* Bottom Container */}
+                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden flex flex-col">
                             <h2 className="text-xl font-bold mb-3">Vorige Lopers</h2>
-                            <div id="previous-runners-container" className="space-y-3">
+                            <div className="space-y-3 overflow-auto h-full">
                                 {data.previousRunners.map((runner) => (
                                     <div key={runner.id} className="flex items-center p-2 bg-gray-50 rounded-lg">
                                         <img

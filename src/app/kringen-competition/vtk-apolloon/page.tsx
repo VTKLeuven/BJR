@@ -60,7 +60,7 @@ const KringenCompetitie: React.FC = () => {
     // Hardcoded countdown to 15:10
     useEffect(() => {
         const target = new Date();
-        target.setDate(target.getDate() + 1);
+        target.setDate(target.getDate());
         target.setHours(15, 10, 0, 0); // Today at 15:10
 
         const updateCountdown = () => {
@@ -68,17 +68,13 @@ const KringenCompetitie: React.FC = () => {
             const diff = target.getTime() - now.getTime();
 
             if (diff <= 0) {
-                setCountdown('00:00:00');
+                setCountdown('00:00');
                 return;
             }
 
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            setCountdown(
-                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`
-            );
+            const minutes = Math.floor(diff / 60000);
+            const seconds = Math.floor((diff % 60000) / 1000);
+            setCountdown(`${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
         };
 
         updateCountdown();
@@ -149,26 +145,12 @@ const KringenCompetitie: React.FC = () => {
                                 {[...data.activeKrings]
                                     .sort((a, b) => {
                                         const convertToSeconds = (timeStr: string) => {
-                                            try {
-                                                const [minutesPart, secondsPart] = timeStr.split(':');
-                                                const minutes = parseInt(minutesPart, 10);
-                                                let seconds = 0;
-                                                let milliseconds = 0;
-                                                if (secondsPart.includes('.')) {
-                                                    const [sec, ms] = secondsPart.split('.');
-                                                    seconds = parseInt(sec, 10);
-                                                    milliseconds = parseInt(ms.padEnd(3, '0'), 10);
-                                                } else {
-                                                    seconds = parseInt(secondsPart, 10);
-                                                }
-                                                const totalSeconds = minutes * 60 + seconds + milliseconds / 1000;
-                                                return totalSeconds;
-                                            } catch (error) {
-                                                console.error(`Error parsing time string "${timeStr}"`, error);
-                                                return 0;
-                                            }
+                                            const [minutesPart, secondsPart] = timeStr.split(':');
+                                            const [seconds, milliseconds] = secondsPart.split('.').map(Number);
+
+                                            const minutes = Number(minutesPart);
+                                            return minutes * 60 + seconds + (milliseconds ? milliseconds / 100 : 0);
                                         };
-                                        console.log(a.averageTime)
                                         const timeA = convertToSeconds(a.averageTime);
                                         const timeB = convertToSeconds(b.averageTime);
                                         return timeA - timeB;
@@ -181,7 +163,7 @@ const KringenCompetitie: React.FC = () => {
                                             style={{ minHeight: '300px' }}
                                         >
                                             {/* Blue number indicator */}
-                                            <div className="absolute -top-3 -left-3 bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold">
+                                            <div className="absolute bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold">
                                                 {index + 1}.
                                             </div>
 
@@ -245,10 +227,11 @@ const KringenCompetitie: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="w-5/12 flex flex-col space-y-6">
-                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden">
+                    <div className="w-5/12 flex flex-col space-y-6 h-[90vh]"> {/* Define height */}
+                        {/* Top Container */}
+                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden flex flex-col">
                             <h2 className="text-xl font-bold mb-3">Snelste Lopers</h2>
-                            <div className="space-y-3" style={{ maxHeight: '40vh' }}>
+                            <div className="space-y-3 overflow-auto h-full">
                                 {data.leaderboard.map((entry, index) => (
                                     <div key={entry.lapId} className={`flex items-center p-2 ${index === 0 ? 'bg-blue-50' : 'bg-gray-50'} rounded-lg`}>
                                         <div className="text-xl font-bold w-8">{index + 1}</div>
@@ -267,9 +250,10 @@ const KringenCompetitie: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-lg shadow-md p-4 flex-1">
+                        {/* Bottom Container */}
+                        <div className="bg-white rounded-lg shadow-md p-4 flex-1 overflow-hidden flex flex-col">
                             <h2 className="text-xl font-bold mb-3">Vorige Lopers</h2>
-                            <div id="previous-runners-container" className="space-y-3">
+                            <div className="space-y-3 overflow-auto h-full">
                                 {data.previousRunners.map((runner) => (
                                     <div key={runner.id} className="flex items-center p-2 bg-gray-50 rounded-lg">
                                         <img
