@@ -46,13 +46,13 @@ model Queue {
 }
 
 model Lap {
-  id        Int      @id @default(autoincrement())
-  runnerId  Int
-  startTime DateTime
-  time      String
-  raining   Boolean
-
-  runner Runner @relation(fields: [runnerId], references: [id])
+  id          Int      @id @default(autoincrement())
+  runnerId    Int
+  startTime   DateTime
+  time        String
+  raining     Boolean
+  competition Int      @default(0) // 0: No competition, 1: Industria-Medica, 2: LBK-VRG, 3: VTK-Apolloon, 4: Group competition, 5: Individual Competition
+  runner      Runner   @relation(fields: [runnerId], references: [id])
 }
 
 model GlobalState {

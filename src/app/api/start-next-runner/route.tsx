@@ -1,9 +1,12 @@
-import { NextResponse } from 'next/server';
+// app/api/create-lap/route.ts
+import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
+// Force dynamic to always read/write the latest state
+export const dynamic = 'force-dynamic';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
         const { identification } = await request.json();
 
@@ -20,13 +23,20 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: 'Runner not found' }, { status: 404 });
         }
 
-        // Create a new lap entry for the runner
+        // Fetch current competition from GlobalState
+        const globalState = await prisma.globalState.findUnique({
+            where: { id: 1 },
+        });
+        const compNr = globalState?.competition ?? 0;
+
+        // Create a new lap entry for the runner, including current competition
         const newLap = await prisma.lap.create({
             data: {
                 runnerId: runner.id,
+                competition: compNr,         // Pulled from GlobalState
                 startTime: new Date(),
-                time: 'null', // Default value
-                raining: false, // Default value, can be updated later
+                time: 'null',          // Default value
+                raining: false,      // Default value, can be updated later
             },
         });
 
@@ -37,7 +47,5 @@ export async function POST(request: Request) {
     } catch (error) {
         console.error('Error creating lap:', error);
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
-    } finally {
-        await prisma.$disconnect();
     }
 }
