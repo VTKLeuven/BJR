@@ -1,5 +1,5 @@
 'use client'
-import { User, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
+import { User, Settings, UserRoundPlus, Users, PlaneLanding, PlaneTakeoff} from "lucide-react";
 import Image from "next/image";
 
 import {
@@ -48,6 +48,11 @@ const items = [
         title: "Finish",
         url: "/finish",
         icon: PlaneLanding,
+    },
+    {
+        title: "Settings",
+        url: "/settings",
+        icon: Settings,
     }
 ];
 

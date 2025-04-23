@@ -56,6 +56,6 @@ model Lap {
 }
 
 model GlobalState {
-  id      Int     @id @default(1) // Ensures there's only one row
-  raining Boolean
+  id          Int @id @default(1) // Ensures there's only one row
+  competition Int @default(0) // 0: No competiton, 1: Industria-Medica, 2: LBK-VRG, 3: VTK-Apolloon, 4: Group competition, 5: Individual Competition
 }
