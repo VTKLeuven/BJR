@@ -85,7 +85,7 @@ for name in kringen:
 
 # Insert data into GlobalState table
 cur.execute(
-    sql.SQL('INSERT INTO "GlobalState" ("id", "raining") VALUES (1, false) ON CONFLICT DO NOTHING')
+    sql.SQL('INSERT INTO "GlobalState" ("id", "competition") VALUES (1, 0) ON CONFLICT DO NOTHING')
 )
 
 # Commit the transaction
